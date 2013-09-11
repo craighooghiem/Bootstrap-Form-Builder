@@ -139,6 +139,23 @@ $(document).ready(function(){
     $("#source").val($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
   }
 
+  var displaySource = function(){
+    var $temptxt = $("<form>").html($("#"+targetForm).html());
+    //scrubbbbbbb
+    $($temptxt).find(".component").attr({"title": null,
+      "data-original-title":null,
+      "data-type": null,
+      "data-content": null,
+      "rel": null,
+      "trigger":null,
+      "style": null});
+    $($temptxt).find(".valtype").attr("data-valtype", null).removeClass("valtype");
+    $($temptxt).find(".component").removeClass("component");
+    $($temptxt).find("."+formClass).attr({"id":  null, "style": null});
+    $("#"+displayCode+"_data").val($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
+    $("#"+displayCode+"_save").val($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
+  }
+
   //activate legend popover
   $("#target .component").popover({trigger: "manual"});
   //popover on click event
@@ -199,6 +216,7 @@ $(document).ready(function(){
     $(".popover").delegate(".btn-danger", "click", function(e){
       e.preventDefault();
       $active_component.popover("hide");
+      genSource();
     });
 
     $(".popover").delegate(".btn-info", "click", function(e){
@@ -274,8 +292,5 @@ $(document).ready(function(){
     genSource();
     });
     });
-  });
-  $("#navtab").delegate("#sourcetab", "click", function(e){
-    genSource();
   });
 });
