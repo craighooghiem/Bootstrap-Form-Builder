@@ -136,7 +136,7 @@ $(document).ready(function(){
     $($temptxt).find(".valtype").attr("data-valtype", null).removeClass("valtype");
     $($temptxt).find(".component").removeClass("component");
     $($temptxt).find("form").attr({"id":  null, "style": null});
-    $("#source").text($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
+    $("#source").val($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
   }
 
   var displaySource = function(){
@@ -153,7 +153,9 @@ $(document).ready(function(){
     $($temptxt).find(".valtype").attr("data-valtype", null).removeClass("valtype");
     $($temptxt).find(".component").removeClass("component");
     $($temptxt).find("#build").attr({"id":  null, "style": null});
-    $("#display_source").text($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
+    $("#source").val($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
+
+    alert($('#source').val());
   }
 
   //activate legend popover
@@ -165,8 +167,6 @@ $(document).ready(function(){
     var $active_component = $(this);
     $active_component.popover("show");
     var valtypes = $active_component.find(".valtype");
-    
-    // START
     $.each(valtypes, function(i,e){
       var valID ="#" + $(e).attr("data-valtype");
       var val;
@@ -189,6 +189,7 @@ $(document).ready(function(){
         val = val.join("\n");
         $(".popover "+valID).text(val);
         $(".popover #name").val($(e).find("input").attr("name"));
+        alert('name');
       } else if(valID==="#inline-checkboxes"){
         val = $.map($(e).find("label"), function(e,i){return $(e).text().trim()});
         val = val.join("\n")
@@ -214,7 +215,6 @@ $(document).ready(function(){
         $(".popover " + valID).val(val);
       }
     });
-    // END
 
     $(".popover").delegate(".btn-danger", "click", function(e){
       e.preventDefault();
@@ -223,97 +223,33 @@ $(document).ready(function(){
     });
 
     // Make the save options button functional
+    // Swap out the old bloat for something a bit less effecient, but easier to work with
     $(".popover").delegate(".btn-info", "click", function(e){
       e.preventDefault();
       var inputs = $(".popover input");
       inputs.push($(".popover textarea")[0]);
-      
-      // Get all the inputs to assign "name" attribute to
-      var inputters = $active_component.find('.controls input');
-      var selecties = $active_component.find('.controls select');
 
-      // Loop through all the inputs in the popout
-      $.each(inputs, function(i,e){
-        // Set the vartype to the ID of the input
+      $.each(inputs, function(i,e) {
+        if($(e).attr('name') !== undefined && $(e).attr('name') !== 'help' && $(e).attr('name') !== 'label') {
+          // Assign the relative value of the input to the value of this field
+          $($active_component.find('.form-control').attr(''+$(e).attr('name')+'', ''+$(e).val()+'' ) );
+        }
+        else if($(e).attr('name') == 'help')
+        {
+          // Assign the relative value of the input to the value of this field
+          $($active_component.find('.help-block').text( ''+$(e).val()+'' ) );
+        }
+        else if($(e).attr('name') == 'label')
+        {
+          // Assign the relative label to the requested label
+          $($active_component.find('.control-label').text( ''+$(e).val()+'' ) );
+        }
+      });
 
-        var vartype = $(e).attr("id");
-        var value = $active_component.find('[data-valtype="'+vartype+'"]');
-        if(vartype==="placeholder"){
-          $(value).attr("placeholder", $(e).val());
-        }
-        else if(vartype==="name"){
-          $.each(inputters, function(index) {
-            $(this).attr('name', $(e).val());
-          });
-          $.each(selecties, function(index) {
-            $(this).attr('name', $(e).val());
-          });
-          $active_component.find('.controls .valname').text($(e).val().split(' ').join('_'));
-        } 
-        else if (vartype==="checkbox"){
-          if($(e).is(":checked")){
-            $(value).attr("checked", true);
-          }
-          else{
-            $(value).attr("checked", false);
-          }
-        } else if (vartype==="option"){
-          var options = $(e).val().split("\n");
-          $(value).html("");
-          $.each(options, function(i,e){
-            $(value).append("\n      ");
-            $(value).append($("<option>").text(e));
-          });
-        } else if (vartype==="checkboxes"){
-          var checkboxes = $(e).val().split("\n");
-          $(value).html("\n      <!-- Multiple Checkboxes -->");
-          $.each(checkboxes, function(i,e){
-            if(e.length > 0){
-              $(value).append('\n      <label class="checkbox">\n        <input type="checkbox" value="'+e+'">\n        '+e+'\n      </label>');
-            }
-          });
-          $(value).append("\n  ")
-        } else if (vartype==="radios"){
-          var group_name = $(".popover #name").val();
-          var radios = $(e).val().split("\n");
-          $(value).html("\n      <!-- Multiple Radios -->");
-          $.each(radios, function(i,e){
-            if(e.length > 0){
-              $(value).append('\n      <label class="radio">\n        <input type="radio" value="'+e+'" name="'+group_name+'">\n        '+e+'\n      </label>');
-            }
-          });
-          $(value).append("\n  ")
-            $($(value).find("input")[0]).attr("checked", true)
-        } else if (vartype==="inline-checkboxes"){
-          var checkboxes = $(e).val().split("\n");
-          $(value).html("\n      <!-- Inline Checkboxes -->");
-          $.each(checkboxes, function(i,e){
-            if(e.length > 0){
-              $(value).append('\n      <label class="checkbox inline">\n        <input type="checkbox" value="'+e+'">\n        '+e+'\n      </label>');
-            }
-          });
-          $(value).append("\n  ")
-        } else if (vartype==="inline-radios"){
-          var radios = $(e).val().split("\n");
-          var group_name = $(".popover #name").val();
-          $(value).html("\n      <!-- Inline Radios -->");
-          $.each(radios, function(i,e){
-            if(e.length > 0){
-              $(value).append('\n      <label class="radio inline">\n        <input type="radio" value="'+e+'" name="'+group_name+'">\n        '+e+'\n      </label>');
-            }
-          });
-          $(value).append("\n  ")
-            $($(value).find("input")[0]).attr("checked", true)
-        } else if (vartype === "button"){
-          var type =  $(".popover #color option:selected").attr("id");
-          $(value).find("button").text($(e).val()).attr("class", "btn "+type);
-        } else {
-          $(value).text($(e).val());
-        }
+
       $active_component.popover("hide");
       genSource();
       displaySource();
-    });
     });
   });
 });
