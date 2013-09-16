@@ -153,8 +153,9 @@ $(document).ready(function(){
     $($temptxt).find(".valtype").attr("data-valtype", null).removeClass("valtype");
     $($temptxt).find(".component").removeClass("component");
     $($temptxt).find("#build").attr({"id":  null, "style": null});
-    $("#"+displayCode+"_data").val($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
-    $("#"+displayCode+"_save").val($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
+    $("#source").val($temptxt.html().replace(/\n\ \ \ \ \ \ \ \ \ \ \ \ /g,"\n"));
+
+    alert($('#source').val());
   }
 
   //activate legend popover
@@ -228,13 +229,17 @@ $(document).ready(function(){
       inputs.push($(".popover textarea")[0]);
 
       $.each(inputs, function(i,e) {
-        if($(e).attr('name') !== undefined && $(e).attr('name') !== 'help') {
+        if($(e).attr('name') !== undefined && $(e).attr('name') !== 'help' && $(e).attr('name') !== 'label') {
           // Assign the relative value of the input to the value of this field
-          $($active_component.attr(''+$(e).attr('name')+'', ''+$(e).val()+''  ) );
+          $($active_component.find('.form-control').attr(''+$(e).attr('name')+'', ''+$(e).val()+''  ) );
         }
         else if($(e).attr('name') == 'help')
         {
           alert('help');
+        }
+        else if($(e).attr('name') == 'label')
+        {
+          alert('label');
         }
       });
 
