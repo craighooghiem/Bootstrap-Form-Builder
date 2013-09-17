@@ -243,12 +243,12 @@ $(document).ready(function(){
         }
         else if(vartype==="name"){
           $.each(inputters, function(index) {
-            $(this).attr('name', $(e).val());
+            $(this).attr('name', $(e).val().split(' ').join('_')); // input name vars
           });
           $.each(selecties, function(index) {
-            $(this).attr('name', $(e).val());
+            $(this).attr('name', $(e).val().split(' ').join('_')); // select button name vars
           });
-          $active_component.find('.controls .valname').text($(e).val().split(' ').join('_'));
+          $active_component.find('.valname').text($(e).val().split(' ').join('_'));
         } 
         else if (vartype==="checkbox"){
           if($(e).is(":checked")){
@@ -265,44 +265,47 @@ $(document).ready(function(){
             $(value).append($("<option>").text(e));
           });
         } else if (vartype==="checkboxes"){
+          var named_var = $(".popover #name").val().split(' ').join('_');
+
           var checkboxes = $(e).val().split("\n");
           $(value).html("\n      <!-- Multiple Checkboxes -->");
           $.each(checkboxes, function(i,e){
             if(e.length > 0){
-              $(value).append('\n      <label class="checkbox">\n        <input type="checkbox" value="'+e+'">\n        '+e+'\n      </label>');
+              $(value).append('\n      <label class="checkbox">\n        <input type="checkbox" value="'+e+'" name="'+named_var+'">\n        '+e+'\n      </label>');
             }
           });
-          $(value).append("\n  ")
+          $(value).append("<span class='invisible valname valtype' data-valtype='name'>"+named_var+"</span>\n  ")
         } else if (vartype==="radios"){
-          var group_name = $(".popover #name").val();
+          var named_var = $(".popover #name").val().split(' ').join('_');
           var radios = $(e).val().split("\n");
           $(value).html("\n      <!-- Multiple Radios -->");
           $.each(radios, function(i,e){
             if(e.length > 0){
-              $(value).append('\n      <label class="radio">\n        <input type="radio" value="'+e+'" name="'+group_name+'">\n        '+e+'\n      </label>');
+              $(value).append('\n      <label class="radio">\n        <input type="radio" value="'+e+'" name="'+named_var+'">\n        '+e+'\n      </label>');
             }
           });
-          $(value).append("\n  ")
+          $(value).append("<span class='invisible valname valtype' data-valtype='name'>"+named_var+"</span>\n  ")
             $($(value).find("input")[0]).attr("checked", true)
         } else if (vartype==="inline-checkboxes"){
+          var named_var = $(".popover #name").val().split(' ').join('_');
           var checkboxes = $(e).val().split("\n");
           $(value).html("\n      <!-- Inline Checkboxes -->");
           $.each(checkboxes, function(i,e){
             if(e.length > 0){
-              $(value).append('\n      <label class="checkbox inline">\n        <input type="checkbox" value="'+e+'">\n        '+e+'\n      </label>');
+              $(value).append('\n      <label class="checkbox inline">\n        <input type="checkbox" value="'+e+'" name="'+named_var+'">\n        '+e+'\n      </label>');
             }
           });
-          $(value).append("\n  ")
+          $(value).append("<span class='invisible valname valtype' data-valtype='name'>"+named_var+"</span>\n  ")
         } else if (vartype==="inline-radios"){
           var radios = $(e).val().split("\n");
-          var group_name = $(".popover #name").val();
+          var named_var = $(".popover #name").val().split(' ').join('_');
           $(value).html("\n      <!-- Inline Radios -->");
           $.each(radios, function(i,e){
             if(e.length > 0){
-              $(value).append('\n      <label class="radio inline">\n        <input type="radio" value="'+e+'" name="'+group_name+'">\n        '+e+'\n      </label>');
+              $(value).append('\n      <label class="radio inline">\n        <input type="radio" value="'+e+'" name="'+named_var+'">\n        '+e+'\n      </label>');
             }
           });
-          $(value).append("\n  ")
+          $(value).append("<span class='invisible valname valtype' data-valtype='name'>"+named_var+"</span>\n  ")
             $($(value).find("input")[0]).attr("checked", true)
         } else if (vartype === "button"){
           var type =  $(".popover #color option:selected").attr("id");
@@ -310,10 +313,11 @@ $(document).ready(function(){
         } else {
           $(value).text($(e).val());
         }
+    });
+      
       $active_component.popover("hide");
       genSource();
       displaySource();
-    });
     });
   });
 });
